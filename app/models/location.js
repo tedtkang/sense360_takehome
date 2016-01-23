@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 
 var locationSchema = mongoose.Schema({
+  setId: Number,
   longitude: Number,
   latitude: Number,
   accuracy: Number,
