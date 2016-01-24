@@ -56,10 +56,18 @@ var setId = readAndSaveLocation(req);
   factualService.advancedAtRestaurant(setId).then(function (result){
     console.log('final result:' + result);
 
-    var returnJson = {};
-    returnJson['name'] = result.name;
-    returnJson['address'] = result.address;
-    returnJson['postcode'] = result.postcode;
+    var returnJson = {};  
+    if (result == null) {
+      returnJson['result'] = false;
+      returnJson['name'] = 'No restaurant was found.';
+    } else {
+      returnJson['result'] = true;
+      returnJson['name'] = result.name;
+      returnJson['address'] = result.address;
+      returnJson['postcode'] = result.postcode;
+    }
+    
+
     
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(returnJson));

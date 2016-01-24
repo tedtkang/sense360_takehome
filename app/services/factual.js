@@ -72,6 +72,7 @@ var factualService = function() {
         var keys = Object.keys(resultHash);
         var restaurants = keys.map(function(k) { return resultHash[k]; });
         //Return restaurant with the most hits
+        //If it was hit on each coordinate, return it else say not there.
         var returnIndex = 0;
         restaurants.reduce(function(prev, cur, index) {
           if (cur.distance.count > prev) {
@@ -81,7 +82,12 @@ var factualService = function() {
             return prev;
           }
         }, 0);
-        return restaurants[returnIndex];
+        if (restaurants[returnIndex].distance.count == locations.count) {
+          return restaurants[returnIndex];  
+        } else {
+          return null;
+        }
+        
       };
       collectAndProcess(locations, simplePostProcess).then(function(result) {
         deferred.resolve(result);
