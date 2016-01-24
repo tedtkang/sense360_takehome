@@ -29,7 +29,6 @@ var factualService = function() {
           callback(error);
         }
 
-        console.log('res: ' + res.data);
         // There's duplicates in the results...
         var dedupArray = [];
         var uniqArray = [];
@@ -39,7 +38,6 @@ var factualService = function() {
             uniqArray[res.data[i].address] = true;
           }
         }
-        console.log('dedupArray: ' + dedupArray);
 
         for (var i = 0; i < dedupArray.length; i++) {
           if (resultHash[dedupArray[i].address]) {
@@ -87,7 +85,7 @@ var factualService = function() {
             return prev;
           }
         }, 0);
-        if (restaurants[returnIndex].distance.count == locations.count) {
+        if (restaurants[returnIndex] && restaurants[returnIndex].distance.count == locations.count) {
           return restaurants[returnIndex];  
         } else {
           return null;

@@ -31,13 +31,7 @@ var readAndSaveLocation = function(req) {
    return setId;
 }
 
-
-/* GET users listing. */
-router.post('/simple', function(req, res, next) {
-  var setId = readAndSaveLocation(req);
-  factualService.simpleAtRestaurant(setId).then(function (result){
-    console.log('final result:' + result);
-
+var returnMethod = function(result, res) {
     var returnJson = {};
     if (result == null) {
       returnJson['result'] = 0;
@@ -49,10 +43,17 @@ router.post('/simple', function(req, res, next) {
       returnJson['data']['postcode'] = result.postcode;
     } 
     res.writeHead(200, {"Content-Type": "application/json"});
-    res.end(JSON.stringify(returnJson));
-   });
-    
+    res.end(JSON.stringify(returnJson));  
+}
 
+
+/* GET users listing. */
+router.post('/simple', function(req, res, next) {
+  var setId = readAndSaveLocation(req);
+  factualService.simpleAtRestaurant(setId).then(function (result){
+    console.log('final result:' + result);    
+    returnMethod(result, res);
+   });
 });
 
 /* GET users listing. */
@@ -60,27 +61,8 @@ router.post('/advanced', function(req, res, next) {
 var setId = readAndSaveLocation(req);
   factualService.advancedAtRestaurant(setId).then(function (result){
     console.log('final result:' + result);
-
-    var returnJson = {};  
-    if (result == null) {
-      returnJson['result'] = 0;
-      returnJson['data'] = 'No restaurant was found.';
-    } else {
-      returnJson['result'] = 1;
-      returnJson['data']['name'] = result.name;
-      returnJson['data']['address'] = result.address;
-      returnJson['data']['postcode'] = result.postcode;
-    }
-    
-    res.writeHead(200, {"Content-Type": "application/json"});
-    res.end(JSON.stringify(returnJson));
-   })
-   .catch(function (error) {
-    console.log('error');
-    res.end(JSON.stringify(error));
+    returnMethod(result, res);
    });
-    
-
 });
 
 module.exports = router;
