@@ -4,45 +4,67 @@ var bodyParser = require('body-parser');
 var Location = require('../models/location');
 var moment = require('moment');
 var factualService = require('../services/factual');
+var Q = require("q");
 
 var jsonParser = bodyParser.json()
 
-/* GET users listing. */
-router.post('/', function(req, res, next) {
-  /*
-  test = new Transaction();
-  test.amount = 53.43
-  test.date = new Date();
-  test.category = 'test category';
-  test.description = 'test description';
-  test.location = 'test location';
-  test.save();
-  console.log(test);
-  res.json(test);
-  */
- console.log("text=" + req.text);
+var readAndSaveLocation = function(req) {
+  var text = req.text.toString();
+  var locationArray = text.split('\n');
 
- var text = req.text.toString();
- var locationArray = text.split('\n');
+  var setId = new Date().getTime();
 
- var setId = new Date().getTime() % 100000000
-
- for (var i = 0; i < locationArray.length; i++) {
+  for (var i = 0; i < locationArray.length; i++) {
     try { 
-      parsedData = JSON.parse(locationArray[i]);
+      parsedData = JSON.parse(locationArray[i]);  
     } catch (e) {
       console.log('not valid json: ' + locationArray[i]);
     }
     parsedData['setId'] = setId;
     loc = new Location(parsedData);
     loc.save(function(err, loc) {
+      console.log('SAVED');
       if (err) return console.error(err);
       console.log(loc);
     });
- }
+   }
+   return setId;
+}
 
- factualService.testFunction();
 
+/* GET users listing. */
+router.post('/simple', function(req, res, next) {
+  var setId = readAndSaveLocation(req);
+  factualService.simpleAtRestaurant(setId).then(function (result){
+    console.log('final result:' + result);
+
+    var returnJson = {};
+    returnJson['name'] = result.name;
+    returnJson['address'] = result.address;
+    returnJson['postcode'] = result.postcode;
+    
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end(JSON.stringify(returnJson));
+   });
+    
+
+});
+
+/* GET users listing. */
+router.post('/advanced', function(req, res, next) {
+var setId = readAndSaveLocation(req);
+  factualService.advancedAtRestaurant(setId).then(function (result){
+    console.log('final result:' + result);
+
+    var returnJson = {};
+    returnJson['name'] = result.name;
+    returnJson['address'] = result.address;
+    returnJson['postcode'] = result.postcode;
+    
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end(JSON.stringify(returnJson));
+   });
+    
 
 });
 

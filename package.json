@@ -25,6 +25,7 @@
     "method-override": "2.3.5",
     "raw-body": "~2.1.5",
     "media-typer": "~0.3.0",
-    "factual-api": "~1.0.7"
+    "factual-api": "~1.0.7",
+    "async": "~1.5.2"
   }
 }
