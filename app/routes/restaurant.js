@@ -39,10 +39,15 @@ router.post('/simple', function(req, res, next) {
     console.log('final result:' + result);
 
     var returnJson = {};
-    returnJson['name'] = result.name;
-    returnJson['address'] = result.address;
-    returnJson['postcode'] = result.postcode;
-    
+    if (result == null) {
+      returnJson['result'] = 0;
+      returnJson['data'] = 'No restaurant was found.';
+    } else {
+      returnJson['result'] = 1;
+      returnJson['data']['name'] = result.name;
+      returnJson['data']['address'] = result.address;
+      returnJson['data']['postcode'] = result.postcode;
+    } 
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(returnJson));
    });
@@ -58,19 +63,21 @@ var setId = readAndSaveLocation(req);
 
     var returnJson = {};  
     if (result == null) {
-      returnJson['result'] = false;
-      returnJson['name'] = 'No restaurant was found.';
+      returnJson['result'] = 0;
+      returnJson['data'] = 'No restaurant was found.';
     } else {
-      returnJson['result'] = true;
-      returnJson['name'] = result.name;
-      returnJson['address'] = result.address;
-      returnJson['postcode'] = result.postcode;
+      returnJson['result'] = 1;
+      returnJson['data']['name'] = result.name;
+      returnJson['data']['address'] = result.address;
+      returnJson['data']['postcode'] = result.postcode;
     }
-    
-
     
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(returnJson));
+   })
+   .catch(function (error) {
+    console.log('error');
+    res.end(JSON.stringify(error));
    });
     
 
